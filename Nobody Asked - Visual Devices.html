@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nobody Asked — Visual Devices</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:#000000;
+    --white:#FFFFFF;
+    --gold:#B9975B;
+    --gold-2:#DFBA7C;
+    --grey:#6B6B66;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:'Poppins',Arial,sans-serif;
+    font-weight:300;
+    -webkit-font-smoothing:antialiased;
+    scroll-snap-type:y mandatory;
+    overflow-y:scroll;
+    overflow-x:hidden;
+    scroll-behavior:smooth;
+  }
+  section{
+    height:100vh;
+    width:100vw;
+    scroll-snap-align:start;
+    position:relative;
+    display:flex;
+    align-items:center;
+    overflow:hidden;
+    padding:0 clamp(40px,7vw,140px);
+  }
+  .bg-black{background:var(--black); color:var(--white);}
+  .bg-white{background:var(--white); color:var(--black);}
+  .bg-gold{background:var(--gold); color:var(--black);}
+  .wrap{max-width:1400px; width:100%; margin:0 auto;}
+
+  .mark{
+    position:fixed; top:44px; left:clamp(40px,7vw,140px);
+    font-size:12px; font-weight:500; letter-spacing:5px; z-index:20;
+    mix-blend-mode:difference; color:#fff;
+  }
+
+  nav.dots{
+    position:fixed; right:36px; top:50%; transform:translateY(-50%);
+    display:flex; flex-direction:column; gap:14px; z-index:20;
+  }
+  nav.dots a{
+    width:7px; height:7px; border-radius:50%;
+    background:rgba(255,255,255,0.35);
+    display:block; transition:background .3s, transform .3s;
+    mix-blend-mode:difference;
+  }
+  nav.dots a.on{background:#fff; transform:scale(1.6);}
+
+  /* ---------- COVER ---------- */
+  #s0 .kicker{font-size:13px; font-weight:500; letter-spacing:5px; color:var(--gold); margin-bottom:28px;
+    opacity:0; transform:translateY(14px); transition:opacity .8s ease, transform .8s ease;}
+  #s0 h1{font-size:clamp(56px,8vw,124px); font-weight:500; line-height:0.98; letter-spacing:-2px;
+    opacity:0; transform:translateY(24px); transition:opacity .9s ease .1s, transform .9s ease .1s;}
+  #s0 h1 span{color:var(--gold);}
+  #s0 .dek{margin-top:30px; font-size:16px; color:#9a9a95; max-width:420px;
+    opacity:0; transform:translateY(14px); transition:opacity .8s ease .3s, transform .8s ease .3s;}
+  #s0.active .kicker, #s0.active h1, #s0.active .dek{opacity:1; transform:translateY(0);}
+
+  .scrollcue{position:absolute; bottom:46px; left:50%; transform:translateX(-50%);
+    font-size:11px; letter-spacing:3px; color:#77746c; display:flex; flex-direction:column; align-items:center; gap:10px;}
+  .scrollcue .chev{width:1px; height:34px; background:linear-gradient(#77746c, transparent); animation:cuemove 1.8s ease-in-out infinite;}
+  @keyframes cuemove{0%{transform:scaleY(0.3); transform-origin:top;} 50%{transform:scaleY(1); transform-origin:top;} 100%{transform:scaleY(0.3); transform-origin:bottom;}}
+
+  /* ---------- SHARED DEVICE LAYOUT ---------- */
+  .device-grid{display:grid; grid-template-columns:1fr 1fr; gap:clamp(40px,6vw,120px); align-items:center; width:100%;}
+  .device-num{font-size:14px; font-weight:500; letter-spacing:3px; color:var(--gold); margin-bottom:22px;}
+  .device-title{font-size:clamp(34px,4vw,58px); font-weight:500; letter-spacing:-1px; margin-bottom:34px; line-height:1.05;}
+  .field{margin-bottom:22px; max-width:520px;}
+  .field:last-child{margin-bottom:0;}
+  .field-label{font-size:11px; font-weight:500; letter-spacing:2px; text-transform:uppercase; margin-bottom:6px; opacity:.55;}
+  .field p{font-size:15.5px; line-height:1.7; font-weight:300;}
+  .visual{position:relative; height:min(52vw,520px); display:flex; align-items:center; justify-content:center;}
+
+  .anim{opacity:0; transform:translateY(20px); transition:opacity .7s ease, transform .7s ease;}
+  section.active .anim{opacity:1; transform:translateY(0);}
+  .anim:nth-child(1){transition-delay:.05s;}
+  .anim:nth-child(2){transition-delay:.15s;}
+  .anim:nth-child(3){transition-delay:.25s;}
+  .anim:nth-child(4){transition-delay:.35s;}
+
+  /* ---------- 01 macro-to-reveal ---------- */
+  #s1 .ring{
+    width:64%; aspect-ratio:1/1; border-radius:50%;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 17px, rgba(0,0,0,.18) 17px, rgba(0,0,0,.18) 18px),
+      repeating-linear-gradient(90deg, transparent, transparent 17px, rgba(0,0,0,.18) 17px, rgba(0,0,0,.18) 18px),
+      var(--black);
+    clip-path:circle(14% at 50% 50%);
+    transition:clip-path 1.4s cubic-bezier(.16,.9,.2,1);
+  }
+  #s1.active .ring{clip-path:circle(50% at 50% 50%);}
+
+  /* ---------- 02 exploded cutaway ---------- */
+  #s2 .layers{width:70%; display:flex; flex-direction:column; align-items:center;}
+  #s2 .layer{width:100%; height:46px; border:1px solid rgba(223,186,124,.5); background:rgba(223,186,124,.06);
+    transition:margin 1s cubic-bezier(.2,.8,.2,1); margin-top:0;}
+  #s2 .layer span{display:block; text-align:center; font-size:11px; letter-spacing:2px; color:var(--gold-2); line-height:46px; opacity:0; transition:opacity .6s ease .5s;}
+  #s2.active .layer:nth-child(2){margin-top:26px;}
+  #s2.active .layer:nth-child(3){margin-top:26px;}
+  #s2.active .layer span{opacity:1;}
+
+  /* ---------- 03 craftsman's hands ---------- */
+  #s3 .rule{width:0; height:2px; background:var(--black); transition:width 1s ease .2s;}
+  #s3.active .rule{width:64px;}
+  #s3 svg{width:100%; height:100%;}
+  #s3 .draw{stroke-dasharray:400; stroke-dashoffset:400; transition:stroke-dashoffset 1.6s ease .3s;}
+  #s3.active .draw{stroke-dashoffset:0;}
+
+  /* ---------- 04 measurement overlay ---------- */
+  #s4 svg{width:100%; height:100%;}
+  #s4 .gline{stroke:var(--gold); stroke-width:1; opacity:.9; stroke-dasharray:300; stroke-dashoffset:300; transition:stroke-dashoffset 1s ease;}
+  #s4.active .gline{stroke-dashoffset:0;}
+  #s4 .gline:nth-child(1){transition-delay:.05s;} #s4 .gline:nth-child(2){transition-delay:.1s;}
+  #s4 .gline:nth-child(3){transition-delay:.15s;} #s4 .gline:nth-child(4){transition-delay:.2s;}
+  #s4 .gline:nth-child(5){transition-delay:.25s;} #s4 .gline:nth-child(6){transition-delay:.3s;}
+  #s4 .callout{opacity:0; transform:translateY(8px); transition:opacity .6s ease .8s, transform .6s ease .8s;}
+  #s4.active .callout{opacity:1; transform:translateY(0);}
+  #s4 .tol{font-size:22px; font-weight:500;}
+
+  /* ---------- CLOSE ---------- */
+  #s5{justify-content:center; text-align:center;}
+  #s5 .wrap{display:flex; flex-direction:column; align-items:center;}
+  #s5 h2{font-size:clamp(34px,5vw,64px); font-weight:500; letter-spacing:6px; color:var(--gold);
+    opacity:0; transform:translateY(16px); transition:opacity 1s ease, transform 1s ease;}
+  #s5.active h2{opacity:1; transform:translateY(0);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition-duration:.01ms !important; animation-duration:.01ms !important;}
+  }
+
+  @media (max-width:860px){
+    .device-grid{grid-template-columns:1fr;}
+    .visual{height:280px; order:-1;}
+  }
+</style>
+</head>
+<body>
+
+<div class="mark">TUXMAT</div>
+<nav class="dots">
+  <a href="#s0" class="d on"></a><a href="#s1" class="d"></a><a href="#s2" class="d"></a>
+  <a href="#s3" class="d"></a><a href="#s4" class="d"></a><a href="#s5" class="d"></a>
+</nav>
+
+<section id="s0" class="bg-black">
+  <div class="wrap">
+    <div class="kicker">NOBODY ASKED</div>
+    <h1>Visual<br><span>devices.</span></h1>
+    <p class="dek">Four concept descriptions. Not a production brief. Each one a system meant to repeat until it's recognizable on sight.</p>
+  </div>
+  <div class="scrollcue"><span>SCROLL</span><span class="chev"></span></div>
+</section>
+
+<section id="s1" class="bg-white">
+  <div class="wrap device-grid">
+    <div>
+      <div class="device-num anim">01 — DEVICE</div>
+      <h2 class="device-title anim">Macro-to-reveal</h2>
+      <div class="field anim"><p class="field-label">The idea</p><p>Every execution opens on an extreme close-up of something nobody would think to ask about: a scan line, a clip mechanism, a stitch of edge trim. The camera holds on the detail before pulling back to reveal it's part of the mat.</p></div>
+      <div class="field anim"><p class="field-label">Why it fits</p><p>It performs the brand's claim. The device makes the viewer notice something they'd have walked past, the same way TuxMat's engineering notices what the category skips.</p></div>
+      <div class="field anim"><p class="field-label">Best use</p><p>Any funnel stage. Product photography only, no people or process footage needed. A social loop, a video open, a PDP hero.</p></div>
+    </div>
+    <div class="visual"><div class="ring"></div></div>
+  </div>
+</section>
+
+<section id="s2" class="bg-black">
+  <div class="wrap device-grid">
+    <div class="visual">
+      <div class="layers">
+        <div class="layer"><span>TRIFORCE™ — TOP</span></div>
+        <div class="layer"><span>TRIFORCE™ — CORE</span></div>
+        <div class="layer"><span>TRIFORCE™ — BASE</span></div>
+      </div>
+    </div>
+    <div>
+      <div class="device-num anim">02 — DEVICE</div>
+      <h2 class="device-title anim">The exploded cutaway</h2>
+      <div class="field anim"><p class="field-label">The idea</p><p>A quiet, engineering-diagram-style reveal: the mat pulls apart into its TriForce™ layers on screen, each layer settling into place before the next appears. No dialogue, no urgency.</p></div>
+      <div class="field anim"><p class="field-label">Why it fits</p><p>It shows the layer nobody would ask to see, proving attention to what's built underneath, not just the visible surface.</p></div>
+      <div class="field anim"><p class="field-label">Best use</p><p>Proof-carrying, mid-funnel. Pairs with "we layered it anyway." A short animation on a PDP or in CRM, no film budget required.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="s3" class="bg-gold">
+  <div class="wrap device-grid">
+    <div>
+      <div class="device-num anim" style="color:#000;opacity:.6">03 — DEVICE</div>
+      <h2 class="device-title anim">The craftsman's hands</h2>
+      <div class="rule"></div>
+      <div class="field anim" style="margin-top:26px"><p class="field-label">The idea</p><p>Tight, warm-neutral framing on hands doing something precise: aligning an anchor point, torquing a clip, running a caliper along a machined edge. No face. Built off a watchmaker resolving an invisible tolerance, and a tailor pinning a fit to one body.</p></div>
+      <div class="field anim"><p class="field-label">Why it fits</p><p>The human version of macro-to-reveal. The person whose care goes unnoticed, not the object. Watchmaker maps to precision. Tailor maps to Built for You.</p></div>
+      <div class="field anim"><p class="field-label">Best use</p><p>Craft and standard, not spec. Top-funnel posture, or bottom-funnel confirmation. Requires a real shoot with real hardware.</p></div>
+    </div>
+    <div class="visual">
+      <svg viewBox="0 0 300 300"><g fill="none" stroke="#000" stroke-width="1.5">
+        <path class="draw" d="M70,230 Q120,180 150,150 Q180,120 230,70"/>
+        <circle class="draw" cx="150" cy="150" r="70" style="transition-delay:.6s"/>
+      </g></svg>
+    </div>
+  </div>
+</section>
+
+<section id="s4" class="bg-white">
+  <div class="wrap device-grid">
+    <div>
+      <div class="device-num anim">04 — DEVICE</div>
+      <h2 class="device-title anim">The measurement overlay</h2>
+      <div class="field anim"><p class="field-label">The idea</p><p>A repeatable graphic treatment laid over live footage or product photography: thin gold laser-grid lines, a small tolerance callout, a single measurement that holds for a beat before fading.</p></div>
+      <div class="field anim"><p class="field-label">Why it fits</p><p>Turns the scan-grid motif into an annotation system that sits on top of any existing photography. A visual shorthand that reads as TuxMat before a word is read.</p></div>
+      <div class="field anim"><p class="field-label">Best use</p><p>The most efficient device to produce at scale. Paid social, email, display, wherever new photography isn't available.</p></div>
+    </div>
+    <div class="visual">
+      <svg viewBox="0 0 300 300">
+        <line class="gline" x1="0" y1="70" x2="300" y2="70"/><line class="gline" x1="0" y1="140" x2="300" y2="140"/>
+        <line class="gline" x1="0" y1="210" x2="300" y2="210"/>
+        <line class="gline" x1="90" y1="0" x2="90" y2="300"/><line class="gline" x1="160" y1="0" x2="160" y2="300"/>
+        <line class="gline" x1="230" y1="0" x2="230" y2="300"/>
+      </svg>
+      <div class="callout" style="position:absolute; bottom:14%; right:6%; text-align:right;">
+        <div style="font-size:11px; letter-spacing:2px; color:#8a8a85;">EDGE TOLERANCE</div>
+        <div class="tol">±0.4mm</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="s5" class="bg-black">
+  <div class="wrap"><h2>NOTHING OVERLOOKED</h2></div>
+</section>
+
+<script>
+  const sections = document.querySelectorAll('section');
+  const dots = document.querySelectorAll('nav.dots a');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      const i = [...sections].indexOf(e.target);
+      if(e.isIntersecting && e.intersectionRatio > 0.5){
+        e.target.classList.add('active');
+        dots.forEach(d=>d.classList.remove('on'));
+        dots[i].classList.add('on');
+      } else if(!e.isIntersecting){
+        e.target.classList.remove('active');
+      }
+    });
+  },{threshold:[0,0.5,1]});
+  sections.forEach(s=>io.observe(s));
+</script>
+</body>
+</html>
